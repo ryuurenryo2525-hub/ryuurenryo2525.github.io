@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สรุปใบพลู</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Kanit:wght@500;600&family=Sarabun:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --leaf-deep:#1F4D36;
+    --leaf-mid:#3F7855;
+    --leaf-light:#DCE9DC;
+    --paper:#F7F3EA;
+    --paper-dark:#EDE4D3;
+    --betel:#A64B2A;
+    --betel-light:#F1DCCF;
+    --ink:#2B2B26;
+    --ink-soft:#63625A;
+    --line: rgba(43,43,38,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Sarabun', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Kanit',sans-serif; font-weight:600; margin:0;}
+  .display{font-family:'Chonburi',cursive; font-weight:400;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:inherit;}
+  button{font-family:'Sarabun',sans-serif; cursor:pointer;}
+  .wrap{max-width:960px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky; top:0; z-index:20;
+    background:rgba(247,243,234,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex; align-items:center; justify-content:space-between; padding:14px 24px; max-width:960px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:8px;}
+  .brand svg{width:26px; height:26px;}
+  .brand span{font-size:20px; color:var(--leaf-deep);}
+  nav.links{display:flex; gap:22px; font-size:14px; color:var(--ink-soft);}
+  nav.links a{text-decoration:none; padding:6px 2px; border-bottom:2px solid transparent; transition:border-color .15s;}
+  nav.links a:hover{border-color:var(--betel); color:var(--ink);}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative; padding:76px 24px 64px; overflow:hidden;}
+  .hero-inner{max-width:960px; margin:0 auto; position:relative; z-index:2;}
+  .eyebrow{font-size:13px; letter-spacing:.06em; color:var(--betel); font-weight:500; margin-bottom:14px;}
+  .hero h1{font-size:56px; color:var(--leaf-deep); line-height:1.15;}
+  .hero p.lead{font-size:17px; color:var(--ink-soft); max-width:480px; margin-top:16px; line-height:1.7;}
+  .hero-actions{display:flex; gap:12px; margin-top:32px; flex-wrap:wrap;}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 22px; border-radius:999px; font-size:15px; font-weight:500;
+    border:1.5px solid var(--leaf-deep); text-decoration:none; transition:transform .12s, background .15s;
+  }
+  .btn-primary{background:var(--leaf-deep); color:var(--paper);}
+  .btn-primary:hover{transform:translateY(-1px); background:var(--leaf-mid);}
+  .btn-ghost{background:transparent; color:var(--leaf-deep);}
+  .btn-ghost:hover{background:var(--leaf-light);}
+  .hero-leaf{position:absolute; right:-60px; top:20px; width:360px; opacity:.9; z-index:1;}
+
+  /* ---------- Divider ---------- */
+  .divider{padding:6px 24px;}
+  .divider svg{display:block; width:100%; height:28px; max-width:960px; margin:0 auto;}
+
+  /* ---------- Section shell ---------- */
+  section{padding:56px 24px;}
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:28px; flex-wrap:wrap;}
+  .section-head h2{font-size:26px; color:var(--leaf-deep);}
+  .section-head p{color:var(--ink-soft); font-size:14px; margin-top:4px;}
+
+  /* ---------- Search ---------- */
+  .searchbar{
+    display:flex; align-items:center; gap:10px;
+    background:#fff; border:1px solid var(--line); border-radius:12px;
+    padding:10px 16px; margin-bottom:24px; max-width:420px;
+  }
+  .searchbar input{border:none; outline:none; font-size:15px; width:100%; background:transparent; font-family:'Sarabun',sans-serif;}
+  .searchbar svg{width:18px; height:18px; color:var(--ink-soft); flex-shrink:0;}
+
+  /* ---------- Subject groups ---------- */
+  .subject{border:1px solid var(--line); border-radius:14px; background:#fff; margin-bottom:16px; overflow:hidden;}
+  .subject-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px; cursor:pointer; gap:12px;
+  }
+  .subject-head:hover{background:var(--paper);}
+  .subject-title{display:flex; align-items:center; gap:12px;}
+  .subject-title .dot{width:10px; height:10px; border-radius:50%; background:var(--betel); flex-shrink:0;}
+  .subject-title h3{font-size:17px;}
+  .subject-count{font-size:12px; color:var(--ink-soft); background:var(--paper-dark); padding:3px 10px; border-radius:999px;}
+  .chevron{transition:transform .2s; color:var(--ink-soft); flex-shrink:0;}
+  .subject.open .chevron{transform:rotate(180deg);}
+  .subject-files{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+  .subject.open .subject-files{max-height:1000px;}
+  .file-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px 20px; border-top:1px solid var(--line);
+  }
+  .file-info{display:flex; align-items:center; gap:12px; min-width:0;}
+  .file-icon{width:34px; height:34px; border-radius:8px; background:var(--betel-light); color:var(--betel); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .file-icon svg{width:17px; height:17px;}
+  .file-text{min-width:0;}
+  .file-text .name{font-size:14.5px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .file-text .meta{font-size:12px; color:var(--ink-soft); margin-top:2px;}
+  .dl-btn{
+    flex-shrink:0; border:1px solid var(--leaf-deep); background:transparent; color:var(--leaf-deep);
+    border-radius:8px; padding:7px 14px; font-size:13px; display:flex; align-items:center; gap:6px;
+  }
+  .dl-btn:hover{background:var(--leaf-light);}
+  .empty-state{padding:40px 20px; text-align:center; color:var(--ink-soft); font-size:14px; border:1px dashed var(--line); border-radius:14px; background:#fff;}
+
+  /* ---------- Upload ---------- */
+  .upload-card{
+    background:#fff; border:1px solid var(--line); border-radius:16px; padding:30px; max-width:560px;
+  }
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:13px; font-weight:500; color:var(--ink-soft); margin-bottom:6px;}
+  .field input[type=text]{
+    width:100%; padding:11px 14px; border:1px solid var(--line); border-radius:10px;
+    font-size:15px; font-family:'Sarabun',sans-serif; background:var(--paper);
+  }
+  .field input[type=text]:focus{outline:none; border-color:var(--leaf-mid);}
+  .dropzone{
+    border:1.5px dashed var(--leaf-mid); border-radius:12px; padding:26px 16px; text-align:center;
+    background:var(--leaf-light); cursor:pointer; transition:background .15s;
+  }
+  .dropzone:hover{background:#cfe3cf;}
+  .dropzone svg{width:26px; height:26px; color:var(--leaf-deep); margin-bottom:6px;}
+  .dropzone .dz-text{font-size:14px; color:var(--leaf-deep); font-weight:500;}
+  .dropzone .dz-sub{font-size:12px; color:var(--ink-soft); margin-top:4px;}
+  .file-chosen{margin-top:10px; font-size:13px; color:var(--ink-soft); display:none;}
+  .submit-row{margin-top:20px; display:flex; align-items:center; gap:12px;}
+  .status-msg{font-size:13px; margin-top:12px; display:none;}
+  .status-msg.ok{color:var(--leaf-deep);}
+  .status-msg.err{color:var(--betel);}
+
+  /* ---------- Donation ---------- */
+  .support{background:var(--leaf-deep); color:var(--paper); border-radius:0;}
+  .support-inner{max-width:960px; margin:0 auto; padding:56px 24px; display:grid; grid-template-columns:1.1fr .9fr; gap:40px;}
+  .support h2{color:var(--paper); font-size:26px;}
+  .support p{color:rgba(247,243,234,0.78); font-size:14.5px; line-height:1.8; margin-top:12px; max-width:420px;}
+  .donate-card{background:rgba(247,243,234,0.06); border:1px solid rgba(247,243,234,0.22); border-radius:16px; padding:26px;}
+  .donate-row{display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(247,243,234,0.16);}
+  .donate-row:last-of-type{border-bottom:none;}
+  .donate-label{font-size:12px; color:rgba(247,243,234,0.6); letter-spacing:.03em;}
+  .donate-value{font-size:17px; font-weight:500; margin-top:2px;}
+  .copy-btn{
+    border:1px solid rgba(247,243,234,0.4); background:transparent; color:var(--paper);
+    border-radius:8px; padding:7px 12px; font-size:12.5px; display:flex; align-items:center; gap:6px; flex-shrink:0;
+  }
+  .copy-btn:hover{background:rgba(247,243,234,0.1);}
+  .copy-btn.copied{border-color:#9FE1CB; color:#9FE1CB;}
+
+  /* ---------- Footer ---------- */
+  footer{padding:28px 24px; text-align:center; font-size:12.5px; color:var(--ink-soft);}
+
+  @media (max-width:720px){
+    .hero h1{font-size:38px;}
+    .hero-leaf{display:none;}
+    .support-inner{grid-template-columns:1fr;}
+    nav.links{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C7 2 4 7 4 12c0 5 4 9 8 10 4-1 8-5 8-10 0-5-3-10-8-10Z" stroke="#1F4D36" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 4v18" stroke="#1F4D36" stroke-width="1.3"/></svg>
+      <span class="display">สรุปใบพลู</span>
+    </div>
+    <nav class="links">
+      <a href="#browse">อ่านสรุป</a>
+      <a href="#upload">อัปโหลดไฟล์</a>
+      <a href="#support">สนับสนุน</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <svg class="hero-leaf" viewBox="0 0 300 400" fill="none">
+    <path d="M150 10C60 60 30 180 90 280C120 330 150 380 150 390C150 380 180 330 210 280C270 180 240 60 150 10Z" stroke="#1F4D36" stroke-opacity="0.15" stroke-width="2"/>
+    <path d="M150 30V370" stroke="#1F4D36" stroke-opacity="0.15" stroke-width="1.5"/>
+    <path d="M150 80 L100 130 M150 130 L210 190 M150 180 L95 230 M150 230 L205 285 M150 280 L110 320" stroke="#1F4D36" stroke-opacity="0.12" stroke-width="1.3"/>
+  </svg>
+  <div class="hero-inner">
+    <div class="eyebrow">สรุปวิชาเรียน · อ่านฟรี</div>
+    <h1 class="display">สรุปใบพลู</h1>
+    <p class="lead">รวมสรุปเนื้อหาวิชาเรียนต่างๆ ไว้ในที่เดียว หยิบอ่านง่าย ไม่ต้องสมัครสมาชิก ใครมีสรุปดีๆ ก็แบ่งปันกันได้เลย</p>
+    <div class="hero-actions">
+      <a href="#browse" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+        เริ่มอ่านสรุป
+      </a>
+      <a href="#upload" class="btn btn-ghost">แบ่งปันไฟล์ของคุณ</a>
+    </div>
+  </div>
+</div>
+
+<div class="divider">
+  <svg viewBox="0 0 960 28" preserveAspectRatio="none"><path d="M0 14 Q120 2 240 14 T480 14 T720 14 T960 14" stroke="#1F4D36" stroke-opacity="0.2" stroke-width="1.4" fill="none"/></svg>
+</div>
+
+<section id="browse">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>คลังสรุป</h2>
+        <p>เลือกวิชาแล้วกดดาวน์โหลดไฟล์ PDF ได้เลย</p>
+      </div>
+    </div>
+    <div class="searchbar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="searchInput" type="text" placeholder="ค้นหาวิชาหรือชื่อไฟล์...">
+    </div>
+    <div id="subjectList"></div>
+  </div>
+</section>
+
+<div class="divider">
+  <svg viewBox="0 0 960 28" preserveAspectRatio="none"><path d="M0 14 Q120 26 240 14 T480 14 T720 14 T960 14" stroke="#1F4D36" stroke-opacity="0.2" stroke-width="1.4" fill="none"/></svg>
+</div>
+
+<section id="upload">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>อัปโหลดไฟล์สรุป</h2>
+        <p>รองรับไฟล์ PDF ขนาดไม่เกิน 4 MB ต่อไฟล์</p>
+      </div>
+    </div>
+    <div class="upload-card">
+      <div class="field">
+        <label for="subjectInput">ชื่อวิชา</label>
+        <input type="text" id="subjectInput" placeholder="เช่น แคลคูลัส 1, ประวัติศาสตร์ไทย">
+      </div>
+      <div class="field">
+        <label for="titleInput">ชื่อไฟล์สรุป</label>
+        <input type="text" id="titleInput" placeholder="เช่น สรุปบทที่ 1-3 ก่อนสอบกลางภาค">
+      </div>
+      <div class="field">
+        <label>ไฟล์ PDF</label>
+        <div class="dropzone" id="dropzone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+          <div class="dz-text">กดเพื่อเลือกไฟล์ PDF</div>
+          <div class="dz-sub">หรือวางไฟล์ตรงนี้</div>
+        </div>
+        <input type="file" id="fileInput" accept="application/pdf" style="display:none">
+        <div class="file-chosen" id="fileChosen"></div>
+      </div>
+      <div class="submit-row">
+        <button class="btn btn-primary" id="uploadBtn" style="border:none;">อัปโหลด</button>
+      </div>
+      <div class="status-msg" id="statusMsg"></div>
+    </div>
+  </div>
+</section>
+
+<div class="support" id="support">
+  <div class="support-inner">
+    <div>
+      <h2>สนับสนุนเว็บนี้</h2>
+      <p>ถ้าสรุปในเว็บนี้มีประโยชน์กับการเรียนของคุณ สามารถโดเนทเป็นกำลังใจให้ผู้ดูแลเว็บได้ผ่าน K PLUS ตามเลขบัญชีด้านล่าง</p>
+    </div>
+    <div class="donate-card">
+      <div class="donate-row">
+        <div>
+          <div class="donate-label">ธนาคาร</div>
+          <div class="donate-value">กสิกรไทย (K PLUS)</div>
+        </div>
+      </div>
+      <div class="donate-row">
+        <div>
+          <div class="donate-label">เลขบัญชี</div>
+          <div class="donate-value mono" id="accountNumber">224-1-45599-0</div>
+        </div>
+        <button class="copy-btn" id="copyBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          คัดลอก
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  ทำด้วยใจ เพื่อคนอ่านสรุปก่อนสอบ · สรุปใบพลู
+</footer>
+
+<script>
+const RAW_ACCOUNT = "2241455990";
+
+document.getElementById('copyBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('copyBtn');
+  try{
+    await navigator.clipboard.writeText(RAW_ACCOUNT);
+    btn.classList.add('copied');
+    btn.querySelector.length; 
+    btn.lastChild.textContent = ' คัดลอกแล้ว';
+    setTimeout(()=>{ btn.classList.remove('copied'); btn.lastChild.textContent=' คัดลอก'; }, 1800);
+  }catch(e){
+    alert('คัดลอกไม่สำเร็จ เลขบัญชีคือ ' + RAW_ACCOUNT);
+  }
+});
+
+const INDEX_KEY = 'baiplu:index';
+let notesIndex = [];
+
+async function loadIndex(){
+  try{
+    const res = await window.storage.get(INDEX_KEY, true);
+    notesIndex = res ? JSON.parse(res.value) : [];
+  }catch(e){
+    notesIndex = [];
+  }
+  renderSubjects();
+}
+
+function groupBySubject(items){
+  const groups = {};
+  items.forEach(it=>{
+    if(!groups[it.subject]) groups[it.subject] = [];
+    groups[it.subject].push(it);
+  });
+  return groups;
+}
+
+function fmtSize(bytes){
+  if(bytes < 1024*1024) return Math.round(bytes/1024) + ' KB';
+  return (bytes/1024/1024).toFixed(1) + ' MB';
+}
+
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('th-TH', {year:'numeric', month:'short', day:'numeric'});
+}
+
+function iconSvg(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>';
+}
+
+function renderSubjects(filterText){
+  const container = document.getElementById('subjectList');
+  const q = (filterText||'').trim().toLowerCase();
+  let items = notesIndex;
+  if(q){
+    items = items.filter(it => it.subject.toLowerCase().includes(q) || it.title.toLowerCase().includes(q));
+  }
+  if(items.length === 0){
+    container.innerHTML = '<div class="empty-state">ยังไม่มีไฟล์สรุปในเว็บนี้ กดปุ่ม "แบ่งปันไฟล์ของคุณ" ด้านบนเพื่อเป็นคนแรกที่อัปโหลด</div>';
+    return;
+  }
+  const groups = groupBySubject(items);
+  const subjects = Object.keys(groups).sort((a,b)=>a.localeCompare(b,'th'));
+  container.innerHTML = subjects.map((subject, idx)=>{
+    const files = groups[subject].sort((a,b)=> new Date(b.uploadedAt) - new Date(a.uploadedAt));
+    const filesHtml = files.map(f=>`
+      <div class="file-row">
+        <div class="file-info">
+          <div class="file-icon">${iconSvg()}</div>
+          <div class="file-text">
+            <div class="name">${escapeHtml(f.title)}</div>
+            <div class="meta mono">${fmtSize(f.size)} · ${fmtDate(f.uploadedAt)}</div>
+          </div>
+        </div>
+        <button class="dl-btn" data-id="${f.id}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4"/><path d="M4 19h16"/></svg>
+          ดาวน์โหลด
+        </button>
+      </div>`).join('');
+    return `
+      <div class="subject" data-idx="${idx}">
+        <div class="subject-head">
+          <div class="subject-title">
+            <span class="dot"></span>
+            <h3>${escapeHtml(subject)}</h3>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span class="subject-count">${files.length} ไฟล์</span>
+            <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+        <div class="subject-files">${filesHtml}</div>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('.subject-head').forEach(head=>{
+    head.addEventListener('click', ()=> head.parentElement.classList.toggle('open'));
+  });
+  container.querySelectorAll('.dl-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); downloadNote(btn.dataset.id, btn); });
+  });
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+document.getElementById('searchInput').addEventListener('input', (e)=> renderSubjects(e.target.value));
+
+async function downloadNote(id, btn){
+  const original = btn.innerHTML;
+  btn.innerHTML = 'กำลังโหลด...';
+  try{
+    const res = await window.storage.get('baiplu:pdf:' + id, true);
+    if(!res) throw new Error('not found');
+    const meta = notesIndex.find(n=>n.id === id);
+    const byteChars = atob(res.value);
+    const bytes = new Uint8Array(byteChars.length);
+    for(let i=0;i<byteChars.length;i++) bytes[i] = byteChars.charCodeAt(i);
+    const blob = new Blob([bytes], {type:'application/pdf'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (meta ? meta.filename : id) || 'summary.pdf';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  }catch(e){
+    alert('ไม่สามารถโหลดไฟล์ได้ ลองใหม่อีกครั้ง');
+  }finally{
+    btn.innerHTML = original;
+  }
+}
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileChosen = document.getElementById('fileChosen');
+let selectedFile = null;
+
+dropzone.addEventListener('click', ()=> fileInput.click());
+dropzone.addEventListener('dragover', e=>{ e.preventDefault(); dropzone.style.background = '#cfe3cf'; });
+dropzone.addEventListener('dragleave', ()=>{ dropzone.style.background = ''; });
+dropzone.addEventListener('drop', e=>{
+  e.preventDefault();
+  dropzone.style.background = '';
+  if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', ()=>{
+  if(fileInput.files.length) handleFile(fileInput.files[0]);
+});
+
+function handleFile(file){
+  if(file.type !== 'application/pdf'){
+    showStatus('รองรับเฉพาะไฟล์ PDF เท่านั้น', 'err');
+    return;
+  }
+  if(file.size > 4*1024*1024){
+    showStatus('ไฟล์ใหญ่เกิน 4 MB กรุณาลดขนาดไฟล์', 'err');
+    return;
+  }
+  selectedFile = file;
+  fileChosen.style.display = 'block';
+  fileChosen.textContent = 'เลือกแล้ว: ' + file.name + ' (' + fmtSize(file.size) + ')';
+}
+
+function showStatus(msg, kind){
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = 'status-msg ' + kind;
+  el.style.display = 'block';
+}
+
+function readFileAsBase64(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=> resolve(reader.result.split(',')[1]);
+    reader.onerror = ()=> reject(new Error('read failed'));
+    reader.readAsDataURL(file);
+  });
+}
+
+document.getElementById('uploadBtn').addEventListener('click', async ()=>{
+  const subject = document.getElementById('subjectInput').value.trim();
+  const title = document.getElementById('titleInput').value.trim();
+  if(!subject || !title){
+    showStatus('กรุณากรอกชื่อวิชาและชื่อไฟล์สรุป', 'err');
+    return;
+  }
+  if(!selectedFile){
+    showStatus('กรุณาเลือกไฟล์ PDF', 'err');
+    return;
+  }
+  const btn = document.getElementById('uploadBtn');
+  const originalText = btn.textContent;
+  btn.textContent = 'กำลังอัปโหลด...';
+  try{
+    const base64 = await readFileAsBase64(selectedFile);
+    const id = 'n_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+    await window.storage.set('baiplu:pdf:' + id, base64, true);
+    const entry = {
+      id, subject, title,
+      filename: selectedFile.name,
+      size: selectedFile.size,
+      uploadedAt: new Date().toISOString()
+    };
+    notesIndex.push(entry);
+    await window.storage.set(INDEX_KEY, JSON.stringify(notesIndex), true);
+    showStatus('อัปโหลดสำเร็จ ไฟล์ของคุณพร้อมให้คนอื่นดาวน์โหลดแล้ว', 'ok');
+    document.getElementById('subjectInput').value = '';
+    document.getElementById('titleInput').value = '';
+    fileChosen.style.display = 'none';
+    selectedFile = null;
+    fileInput.value = '';
+    renderSubjects(document.getElementById('searchInput').value);
+  }catch(e){
+    showStatus('อัปโหลดไม่สำเร็จ กรุณาลองใหม่อีกครั้ง', 'err');
+  }finally{
+    btn.textContent = originalText;
+  }
+});
+
+loadIndex();
+</script>
+
+</body>
+</html>
